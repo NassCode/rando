@@ -1,17 +1,17 @@
 from docx import Document
-from docx.enum.section import WD_SECTION
+from docx.enum.text import WD_BREAK
 
-# Load an existing document
-doc = Document('your_document.docx')
+# Load the existing Word document
+doc = Document('mm.docx')
 
-# Count the number of pages (assuming each 'Enter' or paragraph return is a new page)
-number_of_pages = len(doc.paragraphs)
+# Add a page break at the top of each page
+for i in range(len(doc.paragraphs)):
+    paragraph = doc.paragraphs[i]
+    # Check if the paragraph is the first one on a page
+    if i != 0 and paragraph.text.strip() == '':
+        # Insert a page break before the first paragraph of the page
+        run = paragraph.insert_paragraph_before().add_run()
+        run.add_break(WD_BREAK.PAGE)
 
-# Add a section break for each new page
-for _ in range(number_of_pages - 1):  # -1 because the first page is already a section
-    # Add a section break at the end of the document
-    new_section = doc.add_section(WD_SECTION.NEW_PAGE)
-    # Set your specific section properties here if needed
-
-# Save the document with the new sections
-doc.save('your_document_with_sections.docx')
+# Save the modified document
+doc.save('modified_document.docx')
